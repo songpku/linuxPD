@@ -19,5 +19,5 @@ void giveResponse(FILE *client_sock,char *req)
                     hello \r\n</head>\r\n<body>\r\n \
                     hello everybody\r\n</body>\r\n</html>";
     wrtinfomsg2("Response to req:%s",req);
-    fprintf(client_sock,response_head,html);
+    // fprintf(client_sock,response_head,html);
 }

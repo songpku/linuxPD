@@ -36,9 +36,9 @@ int init_daemon(const char *pname, int facility)
     {
         close(i);
     }
-    open("/dev/null",O_RDONLY);
-    open("/dev/null",O_RDWR);
-    open("/dev/null",O_RDWR);
+    //open("/dev/null",O_RDONLY);
+    //open("/dev/null",O_RDWR);
+    //open("/dev/null",O_RDWR);
 
     //6、改变当前工作目录
     chdir("/tmp");

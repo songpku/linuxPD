@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 	}
 	if(get_arg("ip")==0)
 	{
-		get_addr("eth0");
+		get_addr("eno16777736");
 	}
 	if(get_arg("port")==0)
 	{
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
         int len;
         int new_fd;
         addrlen = sizeof(struct sockaddr_in);
-
+        wrtinfomsg("wait for connect");
         new_fd = accept(sock_fd, (struct sockaddr *) &addr, &addrlen);
         if (new_fd < 0)
 		{
@@ -74,6 +74,9 @@ int main(int argc, char **argv)
 	   {
 		    close(sock_fd);
             bzero(buffer, MAXBUF + 1);
+            char tmp[128];
+            sprintf(tmp,"new_fd is %d",new_fd);
+            wrtinfomsg(tmp);
             if ((len = recv(new_fd, buffer, MAXBUF, 0)) > 0)
 			{
                 FILE *ClientFP = fdopen(new_fd, "w");
@@ -86,6 +89,7 @@ int main(int argc, char **argv)
 				{
                     char Req[MAXPATH + 1] = "";
                     sscanf(buffer, "GET %s HTTP", Req);
+                    wrtinfomsg(Req);
                     bzero(buffer, MAXBUF + 1);
                     sprintf(buffer, "Reuquest get the file: \"%s\"\n", Req);
                     wrtinfomsg(buffer);
@@ -93,10 +97,12 @@ int main(int argc, char **argv)
                     fclose(ClientFP);
                 }
             }
+        	wrtinfomsg("child exit");
             exit(EXIT_SUCCESS);
         }
 		else
         {
+        	wrtinfomsg("father exit");
 			close(new_fd);
 			continue;
 		}

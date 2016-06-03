@@ -11,7 +11,6 @@
 #include"http_server.h"
 #include"http_html.h"
 
-
 int main(int argc,char* argv[])
 {
     struct sockaddr_in addr;

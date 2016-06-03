@@ -34,8 +34,8 @@ char back[128];
 char home_dir[128];
 
 
-void wrtinfomsg(char *msg)        
-{  
+void wrtinfomsg(char *msg)
+{
 	syslog(LOG_INFO,"%s",msg);
 }
 
@@ -129,7 +129,7 @@ char *dir_up(char *dirpath)
 }
 
 
- //send the path data to client ;if path is a file ,send the data, if path is a dir, list 
+ //send the path data to client ;if path is a file ,send the data, if path is a dir, list
 void GiveResponse(FILE * client_sock, char *Path)
 {
     struct dirent *dirent;
@@ -141,7 +141,7 @@ void GiveResponse(FILE * client_sock, char *Path)
 
 	struct passwd *p_passwd;
 	struct group *p_group;
-	char *p_time;	
+	char *p_time;
 
 	//get th dir or file
     len = strlen(home_dir) + strlen(Path) + 1;
@@ -170,7 +170,7 @@ void GiveResponse(FILE * client_sock, char *Path)
     }
 
 	//if file ,send file
-    if (S_ISREG(info.st_mode)) 
+    if (S_ISREG(info.st_mode))
 	{
         fd = open(realPath, O_RDONLY);
         len = lseek(fd, 0, SEEK_END);
@@ -181,11 +181,11 @@ void GiveResponse(FILE * client_sock, char *Path)
         close(fd);
         fprintf(client_sock,
                 "HTTP/1.1 200 OK\r\nServer: Test http server\r\nConnection: keep-alive\r\nContent-type: application/*\r\nContent-Length:%d\r\n\r\n", len);
-       
+
 		fwrite(p, len, 1, client_sock);
         free(p);
-    } 
-	else if (S_ISDIR(info.st_mode)) 
+    }
+	else if (S_ISDIR(info.st_mode))
 	{
 
 	//if dir,list the dir
@@ -204,7 +204,7 @@ void GiveResponse(FILE * client_sock, char *Path)
                     strerror(errno));
             return;
         }
-        while ((dirent = readdir(dir)) != NULL) 
+        while ((dirent = readdir(dir)) != NULL)
 		{
             if (strcmp(Path, "/") == 0)
                 sprintf(Filename, "/%s", dirent->d_name);
@@ -217,7 +217,7 @@ void GiveResponse(FILE * client_sock, char *Path)
             realFilename = malloc(len + 1);
             bzero(realFilename, len + 1);
             sprintf(realFilename, "%s/%s", home_dir, Filename);
-            if (stat(realFilename, &info) == 0) 
+            if (stat(realFilename, &info) == 0)
 			{
                 if (strcmp(dirent->d_name, "..") == 0)
                     fprintf(client_sock, "<td><a href=\"http://%s%s%s\">(parent)</a></td>",
@@ -225,11 +225,11 @@ void GiveResponse(FILE * client_sock, char *Path)
                 else
                     fprintf(client_sock, "<td><a href=\"http://%s%s%s\">%s</a></td>",
                             ip, atoi(port) == 80 ? "" : nport, Filename, dirent->d_name);
-               
+
 
 
 	          	p_time = ctime(&info.st_mtime);
-	           	p_passwd = getpwuid(info.st_uid);	
+	           	p_passwd = getpwuid(info.st_uid);
 	           	p_group = getgrgid(info.st_gid);
 
 			  	fprintf(client_sock, "<td>%c</td>", file_type(info.st_mode));
@@ -260,35 +260,35 @@ void GiveResponse(FILE * client_sock, char *Path)
 
 void init_daemon(const char *pname, int facility)
 {
-	int pid; 
+	int pid;
 	int i;
-	signal(SIGTTOU,SIG_IGN); 
-	signal(SIGTTIN,SIG_IGN); 
-	signal(SIGTSTP,SIG_IGN); 
+	signal(SIGTTOU,SIG_IGN);
+	signal(SIGTTIN,SIG_IGN);
+	signal(SIGTSTP,SIG_IGN);
 	signal(SIGHUP ,SIG_IGN);
-	if(pid=fork()) 
-		exit(EXIT_SUCCESS); 
-	else if(pid< 0) 
+	if(pid=fork())
+		exit(EXIT_SUCCESS);
+	else if(pid< 0)
 	{
 		perror("fork");
 		exit(EXIT_FAILURE);
 	}
-	setsid(); 
-	if(pid=fork()) 
-		exit(EXIT_SUCCESS); 
-	else if(pid< 0) 
+	setsid();
+	if(pid=fork())
+		exit(EXIT_SUCCESS);
+	else if(pid< 0)
 	{
 		perror("fork");
 		exit(EXIT_FAILURE);
-	}  
+	}
 	for(i=0;i< NOFILE;++i)
 		close(i);
-	chdir("/tmp"); 
-	umask(0);  
+	chdir("/tmp");
+	umask(0);
 	signal(SIGCHLD,SIG_IGN);
 	openlog(pname, LOG_PID, facility);
-	return; 
-} 
+	return;
+}
 
 
 int get_addr(char *str)
