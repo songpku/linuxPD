@@ -4,7 +4,7 @@ int main(int argc, char **argv)
 {
     struct sockaddr_in addr;
     int sock_fd, addrlen;
-	
+
 	init_daemon(argv[0],LOG_INFO);
 	if(get_arg("home_dir")==0)
 	{
@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 		sprintf(back,"%s","5");
 	}
 
-    if ((sock_fd = socket(PF_INET, SOCK_STREAM, 0)) < 0) 
+    if ((sock_fd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
     {
 		wrtinfomsg("socket()");
 		exit(EXIT_FAILURE);
@@ -35,17 +35,17 @@ int main(int argc, char **argv)
     addr.sin_port = htons(atoi(port));
     addr.sin_addr.s_addr = inet_addr(ip);
     addrlen = sizeof(struct sockaddr_in);
-    if (bind(sock_fd, (struct sockaddr *) &addr, addrlen) < 0)
+    if (bind(sock_fd, (struct sockaddr *) &addr, sizeof(addr)) < 0)
     {
-		wrtinfomsg("bind");
+		wrtinfomsg("error: bind");
 		exit(EXIT_FAILURE);
 	}
-    if (listen(sock_fd, atoi(back)) < 0)    
+    if (listen(sock_fd, atoi(back)) < 0)
 	{
-		wrtinfomsg("listen");
+		wrtinfomsg("error:listen");
 		exit(EXIT_FAILURE);
 	}
-    while (1) 
+    while (1)
 	{
         int len;
         int new_fd;
@@ -64,25 +64,25 @@ int main(int argc, char **argv)
         wrtinfomsg(buffer);
 
       	//fork a new process to deal with the connect ,the parent continue wait for new connect
-       pid_t pid;  
+       pid_t pid;
 	   if((pid=fork())==-1)
 	   {
 			wrtinfomsg("fork");
 			exit(EXIT_FAILURE);
 		}
-	   if (pid==0) 
+	   if (pid==0)
 	   {
 		    close(sock_fd);
             bzero(buffer, MAXBUF + 1);
-            if ((len = recv(new_fd, buffer, MAXBUF, 0)) > 0) 
+            if ((len = recv(new_fd, buffer, MAXBUF, 0)) > 0)
 			{
                 FILE *ClientFP = fdopen(new_fd, "w");
-                if (ClientFP == NULL) 
+                if (ClientFP == NULL)
 				{
 					wrtinfomsg("fdopen");
 					exit(EXIT_FAILURE);
-                } 
-				else 
+                }
+				else
 				{
                     char Req[MAXPATH + 1] = "";
                     sscanf(buffer, "GET %s HTTP", Req);
@@ -103,5 +103,5 @@ int main(int argc, char **argv)
     }
     close(sock_fd);
     return 0;
-} 
+}
 

@@ -26,23 +26,23 @@ int main(int argc, char **argv)
 	bzero(&dest, sizeof(dest));
 	dest.sin_family = AF_INET;
 	dest.sin_port = htons(7838);
-	if (inet_aton(argv[1], (struct in_addr *) &dest.sin_addr.s_addr) == 0)
+	if (inet_aton(argv[argc-2], (struct in_addr *) &dest.sin_addr.s_addr) == 0)
 	{
-		perror(argv[1]);
+		perror(argv[argc-2]);
 		exit(EXIT_FAILURE);
 	}
 
 	bzero(&mine, sizeof(mine));
 	mine.sin_family = AF_INET;
 	mine.sin_port = htons(7839);
-	if (inet_aton(argv[2], (struct in_addr *) &mine.sin_addr.s_addr) == 0)
+	if (inet_aton(argv[argc-1], (struct in_addr *) &mine.sin_addr.s_addr) == 0)
 	{
-		perror(argv[2]);
+		perror(argv[argc-1]);
 		exit(EXIT_FAILURE);
 	}
 	if (bind(sockfd, (struct sockaddr *) &mine, sizeof(struct sockaddr)) == -1)
 	{
-		perror(argv[3]);
+		perror("bind\n");
 		exit(EXIT_FAILURE);
 	}
 

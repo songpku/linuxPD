@@ -31,14 +31,14 @@ int main(int argc,char *argv[])
   {
     while(1)
     {
-      printf("please input msg to send: ");
+      //printf("please input msg to send: ");
      
       fgets(buf,128,stdin);
-      printf("buf: %s",buf);
+     // printf("buf: %s",buf);
     
-      msg.msg_type = 2;
+      msg.msg_type = 1;
       memcpy(msg.text,buf,MAX_TEXT);
-      printf("send %s to %d,type=2\n",msg.text,msgid);
+     // printf("send %s to %d,type=2\n",msg.text,msgid);
       if(msgsnd(msgid,(void*)&msg,MAX_TEXT,0) == -1)
       {
       	perror("fail to send message\n");
@@ -50,13 +50,13 @@ int main(int argc,char *argv[])
   else
   {
     while(1){
-    	printf("wait: 1\n");
+    	//printf("wait: 1\n");
     	if(msgrcv(msgid,(void*)&msg,MAX_TEXT,2,0)== -1)
     	{
       	perror("fail to receive message\n");
       	exit(EXIT_FAILURE);
       }
-    	printf("recv msg:%s\n",msg.text);	
+    	printf("2: %s\n",msg.text);	
     }
   }
   return 0; 

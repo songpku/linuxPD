@@ -7,7 +7,7 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 
-#include "shmemory.h"
+//#include "shmemory.h"
 
 int main(int argc,char *argv[])
 {
